@@ -5,8 +5,7 @@ MAINTAINER ethan.liu@wezebra.com
 USER root
 
 # install git
-RUN apt-get update
-RUN apt-get install -y git
+RUN apt-get update && apt-get install -y git
 
 # Install Oracle JDK 8
 RUN wget --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" \
@@ -24,3 +23,18 @@ RUN wget http://mirrors.sonic.net/apache/maven/maven-3/3.3.3/binaries/apache-mav
     mv apache-maven-3.3.3 /usr/local && \
     rm -f apache-maven-3.3.3-bin.tar.gz && \
     ln -s /usr/local/apache-maven-3.3.3/bin/mvn /usr/bin/mvn
+    
+# Install gradle
+ENV GRADLE_VERSION 2.11
+
+WORKDIR /usr/bin
+RUN curl -sLO https://downloads.gradle.org/distributions/gradle-2.11-all.zip && \
+  unzip gradle-2.11-all.zip && \
+  ln -s gradle-2.11 gradle && \
+  rm gradle-2.11-all.zip
+
+ENV GRADLE_HOME /usr/bin/gradle
+ENV PATH $PATH:$GRADLE_HOME/bin
+
+RUN mkdir /app
+WORKDIR /app
